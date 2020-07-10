@@ -1,10 +1,13 @@
 package com.foo.accountmanagement.service;
 
 import com.foo.accountmanagement.exception.AccountNotFoundException;
+import com.foo.accountmanagement.exception.SystemBusyException;
 import com.foo.accountmanagement.model.Account;
 import com.foo.accountmanagement.pojo.AccountVO;
+import com.foo.accountmanagement.pojo.TransactionVO;
 import com.foo.accountmanagement.repo.AccountRepo;
 import com.foo.accountmanagement.util.VOEntityConvertor;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,7 @@ public class AccountService {
     }
 
     @CachePut(cacheNames = "find_All_Accounts")
+    @HystrixCommand(fallbackMethod = "timeoutInFindAllAccounts")
     public List<AccountVO> findAllAccounts() {
         final List<Account> accountList = accountRepo.findAll();
         if (accountList.isEmpty()) {
@@ -33,6 +37,10 @@ public class AccountService {
                 accountList.stream().map(s -> VOEntityConvertor.entity2VO(s)).collect(Collectors.toList());
 
         return accountVOList;
+    }
+
+    public List<TransactionVO> timeoutInFindAllAccounts() {
+        throw new SystemBusyException("The system is busy at the moment, maybe try it later.");
     }
 
 }

@@ -1,5 +1,6 @@
 package com.foo.accountmanagement.service;
 
+import com.foo.accountmanagement.exception.SystemBusyException;
 import com.foo.accountmanagement.exception.TransactionNotFoundException;
 import com.foo.accountmanagement.model.Account;
 import com.foo.accountmanagement.model.Transaction;
@@ -7,6 +8,7 @@ import com.foo.accountmanagement.pojo.TransactionVO;
 import com.foo.accountmanagement.repo.AccountRepo;
 import com.foo.accountmanagement.repo.TransactionRepo;
 import com.foo.accountmanagement.util.VOEntityConvertor;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ public class TransactionService {
     }
 
     @CachePut(cacheNames = "find_All_Trx_By_accountNumber", key = "#accountNumber")
+    @HystrixCommand(fallbackMethod = "noTransactionsFoundByAccountNumber")
     public List<TransactionVO> findTransactionsByAccountNumber(final Integer accountNumber) {
         final Account account = accountRepo.findByAccountNumber(accountNumber);
         final List<Transaction> transactionList
@@ -41,5 +44,9 @@ public class TransactionService {
                 .stream()
                 .map(s -> VOEntityConvertor.entity2VO(s, account))
                 .collect(Collectors.toList());
+    }
+
+    public List<TransactionVO> timeoutInFindAllTransactions() {
+        throw new SystemBusyException("The system is busy at the moment, maybe try it later.");
     }
 }
