@@ -1,6 +1,5 @@
 package com.foo.accountmanagement.service;
 
-import com.foo.accountmanagement.exception.SystemBusyException;
 import com.foo.accountmanagement.exception.TransactionNotFoundException;
 import com.foo.accountmanagement.model.Account;
 import com.foo.accountmanagement.model.Transaction;
@@ -13,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +46,8 @@ public class TransactionService {
                 .collect(Collectors.toList());
     }
 
-    public List<TransactionVO> timeoutInFindAllTransactions() {
-        throw new SystemBusyException("The system is busy at the moment, maybe try it later.");
+    public List<TransactionVO> noTransactionsFoundByAccountNumber(final Integer accountNumber) {
+        log.warn("The system is busy at the moment, maybe try it later.");
+        return new ArrayList<>();
     }
 }

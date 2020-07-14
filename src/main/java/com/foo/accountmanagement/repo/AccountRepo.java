@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AccountRepo extends JpaRepository<Account, Integer> {
+    //assume in the accounts table, account_number is unique
     Account findByAccountNumber(int accountNumber);
 }

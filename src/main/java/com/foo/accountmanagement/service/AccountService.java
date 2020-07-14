@@ -4,7 +4,6 @@ import com.foo.accountmanagement.exception.AccountNotFoundException;
 import com.foo.accountmanagement.exception.SystemBusyException;
 import com.foo.accountmanagement.model.Account;
 import com.foo.accountmanagement.pojo.AccountVO;
-import com.foo.accountmanagement.pojo.TransactionVO;
 import com.foo.accountmanagement.repo.AccountRepo;
 import com.foo.accountmanagement.util.VOEntityConvertor;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -39,7 +38,7 @@ public class AccountService {
         return accountVOList;
     }
 
-    public List<TransactionVO> timeoutInFindAllAccounts() {
+    public List<AccountVO> timeoutInFindAllAccounts() {
         throw new SystemBusyException("The system is busy at the moment, maybe try it later.");
     }
 
