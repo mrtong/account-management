@@ -9,9 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-
-import static javax.persistence.CascadeType.*;
 
 @Entity
 @Table(name = "accounts")
